@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.jasper.tagplugins.jstl.core.Out;
+
 import com.dto.Student;
 import com.services.IStudentService;
 import com.servicesFactory.StudentServiceFactory;
@@ -25,14 +27,10 @@ public class ControllerServlet extends HttpServlet {
 		doProcess(request, response);
 	}
 
-	private void doProcess(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		CREATE(request, response);
-	}
-
-	private void CREATE(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	private void doProcess(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		IStudentService studentService = StudentServiceFactory.getStudentService();
 
+		// Create
 		if (request.getRequestURI().endsWith("addform")) {
 			String age = request.getParameter("sage");
 			String name = request.getParameter("sname");
@@ -50,6 +48,110 @@ public class ControllerServlet extends HttpServlet {
 				out.println("<h1 style='color: green; text-align: center;'>REGISTRATION SUCCESSFULL</h1>");
 			} else {
 				out.println("<h1 style='color: red; text-align: center;'>REGISTRATION FAILED</h1>");
+			}
+			out.close();
+		}
+
+		// Read
+		if (request.getRequestURI().endsWith("searchform")) {
+			String sid = request.getParameter("sid");
+
+			Student std = studentService.searchStudent(Integer.parseInt(sid));
+			PrintWriter out = response.getWriter();
+
+			if (std != null) {
+				out.println("<body>");
+				out.println("<br/><br/><br/>");
+				out.println("<center>");
+				out.println("<table border='1'>");
+				out.println("<tr><th>ID</th><td>" + std.getSid() + "</td></tr>");
+				out.println("<tr><th>NAME</th><td>" + std.getSname() + "</td></tr>");
+				out.println("<tr><th>AGE</th><td>" + std.getSage() + "</td></tr>");
+				out.println("<tr><th>ADDRESS</th><td>" + std.getSaddress() + "</td></tr>");
+				out.println("</table>");
+				out.println("</center>");
+				out.println("</body>");
+			} else {
+				out.println("<h1 style='color: red; text-align: center;'>RECORD NOT AVAILABLE FOR THE GIVEN ID :: "
+						+ sid + "</h1>");
+			}
+			out.close();
+		}
+
+		// Delete
+		if (request.getRequestURI().endsWith("deleteform")) {
+			String sid = request.getParameter("sid");
+
+			String status = studentService.deleteStudent(Integer.parseInt(sid));
+			PrintWriter out = response.getWriter();
+
+			if (status.equals("success")) {
+				out.println("<body>");
+				out.println("<h1 style='color: green; text-align: center;'>RECORD DELETED SUCCESSFULLY</h1>");
+				out.println("</body>");
+			} else if (status.equals("failure")) {
+				out.println("<body>");
+				out.println("<h1 style='color: red; text-align: center;'>RECORD DELETION FAILED</h1>");
+				out.println("</body>");
+			} else {
+				out.println("<h1 style='color: red; text-align: center;'>RECORD NOT FOUND FOR DELETION</h1>");
+			}
+			out.close();
+		}
+
+		// Update
+		if (request.getRequestURI().endsWith("editform")) {
+			String sid = request.getParameter("sid");
+
+			Student std = studentService.searchStudent(Integer.parseInt(sid));
+			PrintWriter out = response.getWriter();
+
+			if (std != null) {
+				out.println("<body>");
+				out.println("<center>");
+				out.println("<form method='post' action='./controller/updateRecord'>");
+				out.println("<table>");
+				out.println("<tr><th>ID</th><td> " + std.getSid() + "</td></tr>");
+				out.println("<input type='hidden' name='sid' value='"+std.getSid()+"'/>");
+				out.println("<tr><th>NAME</th><td><input type='text' name='sname' value='" + std.getSname()
+						+ "'/></td></tr>");
+				out.println(
+						"<tr><th>AGE</th><td><input type='text' name='sage' value='" + std.getSage() + "'/></td></tr>");
+				out.println("<tr><th>ADDRESS</th><td><input type='text' name='saddr' value='" + std.getSaddress()
+						+ "'/></td></tr>");
+				out.println("<tr><td><input type='submit' value='update'/></td></tr>");
+				out.println("</table>");
+				out.println("</form>");
+				out.println("</center>");
+				out.println("</body>");
+			} else {
+				out.println("<body>");
+				out.println("<h1 style='color: red; text-align: center;'>RECORD NOT AVAILABLE FOR THE GIVEN ID :: "
+						+ sid + "</h1>");
+				out.println("<body/>");
+			}
+			out.close();
+		}
+		
+		if (request.getRequestURI().endsWith("updateRecord")) {
+			PrintWriter out = response.getWriter();
+			
+			String id = request.getParameter("sid");
+			String name = request.getParameter("sname");
+			String age = request.getParameter("sage");
+			String addr = request.getParameter("saddr");
+			
+			Student student = new Student();
+			student.setSid(Integer.parseInt(id));
+			student.setSname(name);
+			student.setSage(Integer.parseInt(age));
+			student.setSaddress(addr);
+			
+			String status = studentService.updateStudent(student);
+			if (status.equals("success")) {
+				out.println("<h1 style='color: green; text-align: center;'>UPDATION SUCCESSFULL</h1>");
+			} else {
+				out.println("<h1 style='color: red; text-align: center;'>UPDATION FAILED</h1>");
 			}
 			out.close();
 		}

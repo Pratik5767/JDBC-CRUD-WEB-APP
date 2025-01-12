@@ -116,16 +116,16 @@ public class StudentDaoImpl implements IStudentDao {
 
 			if (prepareStatement != null) {
 				prepareStatement.setInt(1, sid);
-			}
 
-			int rowCount = prepareStatement.executeUpdate();
-			if (rowCount == 1) {
-				return "success";
-			} else {
-				return "not found";
+				int rowCount = prepareStatement.executeUpdate();
+				if (rowCount == 1)
+					return "success";
+				else
+					return "not found";
 			}
 		} catch (SQLException | IOException e) {
 			e.printStackTrace();
+			return "failure";
 		}
 		return "failure";
 	}

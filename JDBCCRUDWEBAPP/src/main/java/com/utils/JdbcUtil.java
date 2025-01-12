@@ -26,13 +26,14 @@ public class JdbcUtil {
 	// Establish the connection
 	public static Connection getJdbcConnection() throws SQLException, IOException {
 		FileInputStream fis = new FileInputStream(
-				"D:\\Pratik\\Java Web Applications\\JDBCCRUDWEBAPP\\src\\main\\java\\com\\properties\\application.properties");
+				"D:\\Pratik\\git\\JDBC-CRUD-WEB-APP\\JDBCCRUDWEBAPP\\src\\main\\java\\com\\properties\\application.properties");
 		Properties properties = new Properties();
 		properties.load(fis);
 
 		Connection connection = DriverManager.getConnection(properties.getProperty("jdbcUrl"),
 				properties.getProperty("user"), properties.getProperty("password"));
 		return connection;
+
 	}
 
 	public static void closeConnection(Connection connection, PreparedStatement preparedStatement, ResultSet resultSet)
