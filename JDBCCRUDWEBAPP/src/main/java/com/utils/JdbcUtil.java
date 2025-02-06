@@ -28,18 +28,20 @@ public class JdbcUtil {
 
 	// Establish the connection
 	public static Connection getJdbcConnection() throws SQLException, IOException {
-		/*
-		 * String fileLoc =
-		 * "D:\\Pratik\\git\\JDBC-CRUD-WEB-APP\\JDBCCRUDWEBAPP\\src\\main\\java\\com\\properties\\application.properties";
-		 * HikariConfig config = new HikariConfig(fileLoc); HikariDataSource dataSource
-		 * = new HikariDataSource(config); return dataSource.getConnection();
-		 */
-		
-		return physicalConnection();
+		return logicalConnection();
+		// return physicalConnection();
+	}
+
+	public static Connection logicalConnection() throws SQLException {
+		String fileLoc = "D:\\Pratik\\git\\JDBC-CRUD-WEB-APP\\JDBCCRUDWEBAPP\\src\\main\\java\\com\\properties\\application.properties";
+		HikariConfig config = new HikariConfig(fileLoc);
+		HikariDataSource dataSource = new HikariDataSource(config);
+		return dataSource.getConnection();
 	}
 
 	public static Connection physicalConnection() throws SQLException, IOException {
-		FileInputStream fis = new FileInputStream("D:\\Pratik\\git\\JDBC-CRUD-WEB-APP\\JDBCCRUDWEBAPP\\src\\main\\java\\com\\properties\\application.properties");
+		FileInputStream fis = new FileInputStream(
+				"D:\\Pratik\\git\\JDBC-CRUD-WEB-APP\\JDBCCRUDWEBAPP\\src\\main\\java\\com\\properties\\application.properties");
 		Properties properties = new Properties();
 		properties.load(fis);
 
